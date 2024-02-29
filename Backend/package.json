@@ -1,0 +1,19 @@
+{
+  "name": "docmeet_backend",
+  "version": "1.0.0",
+  "description": "Docmeet backend packages",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Henryno111/DOCmeet_web_app.git"
+  },
+  "author": "Henry Agukwe & Uchechukwu Theophilus",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Henryno111/DOCmeet_web_app/issues"
+  },
+  "homepage": "https://github.com/Henryno111/DOCmeet_web_app#readme"
+}
