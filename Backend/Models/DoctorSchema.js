@@ -102,5 +102,19 @@ DoctorSchema.pre("save", async function (next) {
   next();
 });
 
+DoctorSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
+  if (this.passwordChangedAt) {
+    const changedTimestamp = parseInt(
+      this.passwordChangedAt.getTime() / 1000,
+      10
+    );
+
+    return JWTTimestamp < changedTimestamp;
+  }
+
+  // False means NOT changed
+  return false;
+};
+
 const Doctor = mongoose.model("Doctor", DoctorSchema);
 export default Doctor;

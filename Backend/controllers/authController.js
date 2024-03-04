@@ -5,6 +5,7 @@ import AppError from "../errorHandlers/appError.js";
 import { sendToken } from "../utils/sendToken.js";
 import Email from "../emails/email.js";
 import jwt from "jsonwebtoken";
+import { correctPassword } from "../services/passwordServices.js";
 
 // Create activation token and the token
 export const createActivationToken = (user) => {
@@ -105,4 +106,37 @@ export const activateUser = catchAsync(async (req, res, next) => {
   }
 
   sendToken(user, 201, res);
+});
+
+// Login the user
+export const login = catchAsync(async (req, res, next) => {
+  const { email, password, role } = req.body;
+
+  // 1) Check if email and password exist
+  if (!email || !password || !role) {
+    return next(new AppError("Please provide email, password and role!", 400));
+  }
+
+  // 2) Check if user exists && password is correct
+  let user = null;
+
+  if (role === "patient") {
+    user = await User.findOne({ email }).select("+password");
+  } else if (role === "doctor") {
+    user = await Doctor.findOne({ email }).select("+password");
+  } else {
+    return next(
+      new AppError(
+        "Please provide a valid role: [patient or doctor] to continue",
+        400
+      )
+    );
+  }
+
+  if (!user || !(await correctPassword(password, user.password))) {
+    return next(new AppError("Incorrect email or password", 401));
+  }
+
+  // 3) If everything ok, send token to client
+  sendToken(user, 200, res);
 });
