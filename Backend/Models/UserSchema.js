@@ -25,7 +25,7 @@ const UserSchema = new mongoose.Schema(
       select: false,
     },
 
-    passwordConfirm: {
+    confirmPassword: {
       type: String,
       required: [true, "Please confirm your password"],
       validate: {
@@ -51,7 +51,7 @@ const UserSchema = new mongoose.Schema(
 
     role: {
       type: String,
-      enum: ["patient", "doctor"],
+      enum: ["patient", "admin"],
       default: "patient",
     },
 
@@ -68,8 +68,7 @@ const UserSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
-userSchema.pre("save", async function (next) {
+UserSchema.pre("save", async function (next) {
   // Only run this function if password was actually modified
   if (!this.isModified("password")) return next();
 
@@ -77,24 +76,24 @@ userSchema.pre("save", async function (next) {
   this.password = await bcrypt.hash(this.password, 12);
 
   // Delete passwordConfirm field
-  this.passwordConfirm = undefined;
+  this.confirmPassword = undefined;
   next();
 });
 
-userSchema.pre(/^find/, function (next) {
+UserSchema.pre(/^find/, function (next) {
   // this points to the current query
   this.find({ active: { $ne: false } });
   next();
 });
 
-userSchema.methods.correctPassword = async function (
+UserSchema.methods.correctPassword = async function (
   candidatePassword,
   userPassword
 ) {
   return await bcrypt.compare(candidatePassword, userPassword);
 };
 
-userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
+UserSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
   if (this.passwordChangedAt) {
     const changedTimestamp = parseInt(
       this.passwordChangedAt.getTime() / 1000,
@@ -108,7 +107,7 @@ userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
   return false;
 };
 
-userSchema.methods.createPasswordResetToken = function () {
+UserSchema.methods.createPasswordResetToken = function () {
   const resetToken = crypto.randomBytes(32).toString("hex");
 
   this.passwordResetToken = crypto
