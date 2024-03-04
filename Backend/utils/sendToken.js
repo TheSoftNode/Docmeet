@@ -38,6 +38,11 @@ export const sendToken = (user, statusCode, res) => {
   //   res.cookie("access_token", accessToken, accessTokenOptions);
   //   res.cookie("refresh_token", refreshToken, refreshTokenOptions);
 
+  // Set the Authorization header with the accessToken
+  res.setHeader("Authorization", `Bearer ${accessToken}`);
+  // Optionally, you can also send the refreshToken in a custom header
+  res.setHeader("X-Refresh-Token", refreshToken);
+
   // Remove password from output
   user.password = undefined;
 
