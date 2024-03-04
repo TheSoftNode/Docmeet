@@ -2,7 +2,11 @@ import catchAsync from "../utils/catchAsync.js";
 import User from "../Models/UserSchema.js";
 import Doctor from "../Models/DoctorSchema.js";
 import AppError from "../errorHandlers/appError.js";
-import { sendToken } from "../utils/sendToken.js";
+import {
+  SignInAccessToken,
+  SignInRefreshToken,
+  sendToken,
+} from "../utils/sendToken.js";
 import Email from "../emails/email.js";
 import jwt from "jsonwebtoken";
 import { correctPassword } from "../services/passwordServices.js";
@@ -110,27 +114,23 @@ export const activateUser = catchAsync(async (req, res, next) => {
 
 // Login the user
 export const login = catchAsync(async (req, res, next) => {
-  const { email, password, role } = req.body;
+  const { email, password } = req.body;
 
   // 1) Check if email and password exist
-  if (!email || !password || !role) {
-    return next(new AppError("Please provide email, password and role!", 400));
+  if (!email || !password) {
+    return next(new AppError("Please provide email and password!", 400));
   }
 
   // 2) Check if user exists && password is correct
   let user = null;
 
-  if (role === "patient") {
-    user = await User.findOne({ email }).select("+password");
-  } else if (role === "doctor") {
-    user = await Doctor.findOne({ email }).select("+password");
-  } else {
-    return next(
-      new AppError(
-        "Please provide a valid role: [patient or doctor] to continue",
-        400
-      )
-    );
+  const patient = await User.findOne({ email }).select("+password");
+  const doctor = await Doctor.findOne({ email }).select("+password");
+
+  if (patient) {
+    user = patient;
+  } else if (doctor) {
+    user = doctor;
   }
 
   if (!user || !(await correctPassword(password, user.password))) {
@@ -139,4 +139,62 @@ export const login = catchAsync(async (req, res, next) => {
 
   // 3) If everything ok, send token to client
   sendToken(user, 200, res);
+});
+
+// update access token
+export const refreshToken = catchAsync(async (req, res, next) => {
+  let refresh_token;
+
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer")
+  ) {
+    refresh_token = req.headers.authorization.split(" ")[1];
+  }
+
+  const decoded = jwt.verify(refresh_token, process.env.REFRESH_TOKEN);
+
+  if (!decoded) return next(new AppError("Could not refresh token", 400));
+
+  let currentUser = null;
+
+  if (decoded.role === "patient") {
+    currentUser = await User.findById(decoded.id);
+  } else {
+    currentUser = await Doctor.findById(decoded.id);
+  }
+
+  if (!currentUser)
+    return next(new AppError("Please login to access these resources!", 400));
+
+  // 4) Check if user changed password after the token was issued
+  if (currentUser.changedPasswordAfter(decoded.iat)) {
+    return next(
+      new AppError("User recently changed password! Please log in again.", 401)
+    );
+  }
+
+  const accessToken = SignInAccessToken(
+    currentUser._id,
+    currentUser.role,
+    "5m"
+  );
+  const refreshToken = SignInRefreshToken(
+    currentUser._id,
+    currentUser.role,
+    "3d"
+  );
+
+  req.user = currentUser;
+
+  // Set the Authorization header with the accessToken
+  res.setHeader("Authorization", `Bearer ${accessToken}`);
+  // Optionally, you can also send the refreshToken in a custom header
+  res.setHeader("X-Refresh-Token", refreshToken);
+
+  res.status(200).json({
+    status: "success",
+    accessToken,
+    refreshToken,
+  });
 });

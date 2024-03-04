@@ -28,8 +28,8 @@ const refreshTokenExpire = parseInt(
 
 // Prepare and send token to the user
 export const sendToken = (user, statusCode, res) => {
-  const accessToken = SignInAccessToken(user._id, "3m");
-  const refreshToken = SignInRefreshToken(user._id, "3d");
+  const accessToken = SignInAccessToken(user._id, user.role, "3m");
+  const refreshToken = SignInRefreshToken(user._id, user.role, "3d");
 
   // Only set secure to true in production
   if (process.env.NODE_ENV === "production") accessTokenOptions.secure = true;
@@ -55,15 +55,15 @@ export const sendToken = (user, statusCode, res) => {
 };
 
 // Sign Access token
-export const SignInAccessToken = function (id, exp) {
-  return jwt.sign({ id }, process.env.ACCESS_TOKEN, {
+export const SignInAccessToken = function (id, role, exp) {
+  return jwt.sign({ id, role }, process.env.ACCESS_TOKEN, {
     expiresIn: exp,
   });
 };
 
 // Sign Refresh token
-export const SignInRefreshToken = function (id, exp) {
-  return jwt.sign({ id }, process.env.REFRESH_TOKEN, {
+export const SignInRefreshToken = function (id, role, exp) {
+  return jwt.sign({ id, role }, process.env.REFRESH_TOKEN, {
     expiresIn: exp,
   });
 };
