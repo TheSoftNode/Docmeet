@@ -31,18 +31,6 @@ export const sendToken = (user, statusCode, res) => {
   const accessToken = SignInAccessToken(user._id, user.role, "3m");
   const refreshToken = SignInRefreshToken(user._id, user.role, "3d");
 
-  // Only set secure to true in production
-  if (process.env.NODE_ENV === "production") accessTokenOptions.secure = true;
-
-  // Add both tokens to the cookie response
-  //   res.cookie("access_token", accessToken, accessTokenOptions);
-  //   res.cookie("refresh_token", refreshToken, refreshTokenOptions);
-
-  // Set the Authorization header with the accessToken
-  res.setHeader("Authorization", `Bearer ${accessToken}`);
-  // Optionally, you can also send the refreshToken in a custom header
-  res.setHeader("X-Refresh-Token", refreshToken);
-
   // Remove password from output
   user.password = undefined;
 
