@@ -25,6 +25,11 @@ const UserSchema = new mongoose.Schema(
       select: false,
     },
 
+    hashPassword: {
+      type: Boolean,
+      default: true,
+    },
+
     confirmPassword: {
       type: String,
       required: [true, "Please confirm your password"],
@@ -60,7 +65,7 @@ const UserSchema = new mongoose.Schema(
     active: {
       type: Boolean,
       default: true,
-      // select: false,
+      select: false,
     },
 
     bloodType: { type: String },

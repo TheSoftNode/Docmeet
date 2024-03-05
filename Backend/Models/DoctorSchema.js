@@ -23,6 +23,11 @@ const DoctorSchema = new mongoose.Schema({
     select: false,
   },
 
+  hashPassword: {
+    type: Boolean,
+    default: true,
+  },
+
   confirmPassword: {
     type: String,
     required: [true, "Please confirm your password"],
@@ -52,12 +57,13 @@ const DoctorSchema = new mongoose.Schema({
   active: {
     type: Boolean,
     default: true,
-    // select: false,
+    select: false,
   },
 
   ticketPrice: { type: Number },
   role: {
     type: String,
+    enum: ["doctor", "admin"],
   },
 
   // Fields for doctors only
@@ -90,15 +96,20 @@ const DoctorSchema = new mongoose.Schema({
   appointments: [{ type: mongoose.Types.ObjectId, ref: "Appointment" }],
 });
 
+let skipHashing = false;
+
 DoctorSchema.pre("save", async function (next) {
   // Only run this function if password was actually modified
-  if (!this.isModified("password")) return next();
+  if (!this.isModified("password") || !this.hashPassword) {
+    return next();
+  }
 
   // Hash the password with cost of 12
   this.password = await bcrypt.hash(this.password, 12);
 
   // Delete passwordConfirm field
   this.confirmPassword = undefined;
+
   next();
 });
 
