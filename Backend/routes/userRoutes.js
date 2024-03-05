@@ -1,15 +1,28 @@
 import express from "express";
+
 import {
-  signUp,
-  activateUser,
-  login,
-  refreshToken,
-} from "../controllers/authController.js";
+  createUser,
+  deleteMe,
+  deleteUser,
+  getAllUsers,
+  getMe,
+  getUser,
+  updateMe,
+  updateUser,
+  updateUserRole,
+} from "../controllers/userController.js";
+
 const router = express.Router();
 
-router.route("/signUp").post(signUp);
-router.route("/activateUser").post(activateUser);
-router.route("/login").post(login);
-router.route("/refresh-token").get(refreshToken);
+// Ensure that all the routes below are authenticated
+router.get("/me", getMe, getUser);
+router.patch("/update-me", updateMe);
+router.delete("/delete-me", deleteMe);
+
+// Restrict the endpoints below to admin access only
+router.route("/").get(getAllUsers).post(createUser);
+router.route("/:id").get(getUser).patch(updateUser).delete(deleteUser);
+
+router.route("/update-user-role/:id").patch(updateUserRole);
 
 export default router;
