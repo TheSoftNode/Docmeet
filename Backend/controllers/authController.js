@@ -30,15 +30,18 @@ export const createActivationToken = (user) => {
 export const signUp = catchAsync(async (req, res, next) => {
   const { email, name, password, confirmPassword, role, gender } = req.body;
 
-  let checkEmail = null;
+  //   let checkEmail = null;
 
-  if (role === "patient") {
-    checkEmail = await User.findOne({ email });
-  } else if (role === "doctor") {
-    checkEmail = await Doctor.findOne({ email });
-  }
+  const patient = await User.findOne({ email });
+  const doctor = await Doctor.findOne({ email });
 
-  if (checkEmail) return next(new AppError("Email Already exists", 400));
+  //   if (role === "patient") {
+  //     checkEmail = await User.findOne({ email });
+  //   } else if (role === "doctor") {
+  //     checkEmail = await Doctor.findOne({ email });
+  //   }
+
+  if (patient || doctor) return next(new AppError("Email Already exists", 400));
 
   const user = {
     email,
