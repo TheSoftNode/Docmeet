@@ -69,7 +69,7 @@ export const getAll = (Model) =>
   catchAsync(async (req, res, next) => {
     // To allow for nested GET reviews on tour (hack)
     let filter = {};
-    if (req.params.tourId) filter = { tour: req.params.tourId };
+    // if (req.params.tourId) filter = { tour: req.params.tourId };
 
     const features = new APIFeatures(Model.find(filter), req.query)
       .filter()
@@ -86,5 +86,47 @@ export const getAll = (Model) =>
       data: {
         data: doc,
       },
+    });
+  });
+
+export const updateRole = (Model, destModel, newRole) =>
+  catchAsync(async (req, res, next) => {
+    let newUser = null;
+
+    if (req.body.role && req.body.role === newRole) {
+      const doc = await Model.findByIdAndDelete(req.params.id).select(
+        "+password"
+      );
+
+      if (!doc)
+        return next(
+          new AppError("The user/doc with that ID doesn't exist", 404)
+        );
+
+      const newDoc = {
+        email: doc.email,
+        name: doc.name,
+        password: doc.password,
+        hashPassword: false,
+        role: newRole,
+        gender: doc.gender,
+      };
+
+      newUser = new destModel(newDoc);
+
+      await newUser.save({ validateBeforeSave: false });
+    } else {
+      newUser = await Model.findByIdAndUpdate(
+        req.params.id,
+        {
+          role: req.body.role,
+        },
+        { new: true }
+      );
+    }
+
+    res.status(200).json({
+      status: "success",
+      data: newUser,
     });
   });
