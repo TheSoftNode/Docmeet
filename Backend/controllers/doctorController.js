@@ -1,4 +1,5 @@
 import Doctor from "../Models/DoctorSchema.js";
+import User from "../Models/UserSchema.js";
 import catchAsync from "./../utils/catchAsync.js";
 import AppError from "../errorHandlers/appError.js";
 import {
@@ -6,6 +7,7 @@ import {
   getAll,
   getOne,
   updateOne,
+  updateRole,
 } from "../services/GenericService.js";
 import Email from "../emails/email.js";
 
@@ -104,8 +106,11 @@ export const createDoctor = (req, res) => {
   });
 };
 
-export const getDoctor = getOne(Doctor);
+export const approveDoctor = catchAsync(async (req, res, next) => {});
+
+export const getDoctor = getOne(Doctor, { path: "reviews" });
 export const getAllDoctors = getAll(Doctor);
+export const updateDoctorRole = updateRole(Doctor, User, "patient");
 
 // Do NOT update passwords with this!
 export const updateDoctor = updateOne(Doctor);
