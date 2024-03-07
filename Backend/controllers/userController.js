@@ -142,7 +142,7 @@ export const createUser = (req, res) => {
 };
 
 export const getUser = getOne(User);
-export const getAllUsers = getAll(User);
+export const getAllUsers = getAll(User); //, { role: "admin" });
 export const updateUserRole = updateRole(User, Doctor, "doctor");
 
 // Do NOT update passwords with this!
