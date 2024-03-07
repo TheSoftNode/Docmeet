@@ -28,6 +28,7 @@ const UserSchema = new mongoose.Schema(
     hashPassword: {
       type: Boolean,
       default: true,
+      select: false,
     },
 
     confirmPassword: {
@@ -73,20 +74,28 @@ const UserSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
 UserSchema.pre("save", async function (next) {
   // Only run this function if password was actually modified
-  if (!this.isModified("password")) return next();
+  if (!this.isModified("password") || !this.hashPassword) {
+    this.hashPassword = undefined;
+    return next();
+  }
 
   // Hash the password with cost of 12
   this.password = await bcrypt.hash(this.password, 12);
 
   // Delete passwordConfirm field
   this.confirmPassword = undefined;
+  this.hashPassword = undefined;
+
   next();
 });
 
 UserSchema.pre(/^find/, function (next) {
   // this points to the current query
+  if (this.getOptions().role === "admin") return next();
+
   this.find({ active: { $ne: false } });
   next();
 });
