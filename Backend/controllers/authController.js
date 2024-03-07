@@ -30,16 +30,15 @@ export const createActivationToken = (user) => {
 export const signUp = catchAsync(async (req, res, next) => {
   const { email, name, password, confirmPassword, role, gender } = req.body;
 
-  //   let checkEmail = null;
+  const allowedRole = ["patient", "doctor"];
+  if (!allowedRole.includes(req.body.role)) {
+    return next(
+      new AppError(`The specified role "${req.body.role}" is invalid`)
+    );
+  }
 
   const patient = await User.findOne({ email });
   const doctor = await Doctor.findOne({ email });
-
-  //   if (role === "patient") {
-  //     checkEmail = await User.findOne({ email });
-  //   } else if (role === "doctor") {
-  //     checkEmail = await Doctor.findOne({ email });
-  //   }
 
   if (patient || doctor) return next(new AppError("Email Already exists", 400));
 
@@ -110,6 +109,10 @@ export const activateUser = catchAsync(async (req, res, next) => {
       role,
       gender,
     });
+
+    // Send a notification to the admin to verify approve the doctor
+
+    // Also, Send email to the admin to verify and approve the doctor
   }
 
   sendToken(user, 201, res);
@@ -125,7 +128,7 @@ export const login = catchAsync(async (req, res, next) => {
   }
 
   // 2) Check if user exists && password is correct
-  let user = null;
+  let user;
 
   const patient = await User.findOne({ email }).select("+password");
   const doctor = await Doctor.findOne({ email }).select("+password");
@@ -159,12 +162,20 @@ export const refreshToken = catchAsync(async (req, res, next) => {
 
   if (!decoded) return next(new AppError("Could not refresh token", 400));
 
-  let currentUser = null;
+  let currentUser;
 
-  if (decoded.role === "patient") {
-    currentUser = await User.findById(decoded.id);
+  //   if (decoded.role === "patient") {
+  //     currentUser = await User.findById(decoded.id);
+  //   } else if (decoded.role === "doctor") {
+  //     currentUser = await Doctor.findById(decoded.id);
+  //   }
+  const patient = await User.findById(decoded.id);
+
+  if (!patient) {
+    const doctor = await Doctor.findById(decoded.id);
+    currentUser = doctor;
   } else {
-    currentUser = await Doctor.findById(decoded.id);
+    currentUser = patient;
   }
 
   if (!currentUser)
@@ -190,10 +201,10 @@ export const refreshToken = catchAsync(async (req, res, next) => {
 
   req.user = currentUser;
 
-  // Set the Authorization header with the accessToken
-  res.setHeader("Authorization", `Bearer ${accessToken}`);
-  // Optionally, you can also send the refreshToken in a custom header
-  res.setHeader("X-Refresh-Token", refreshToken);
+  //   // Set the Authorization header with the accessToken
+  //   res.setHeader("Authorization", `Bearer ${accessToken}`);
+  //   // Optionally, you can also send the refreshToken in a custom header
+  //   res.setHeader("X-Refresh-Token", refreshToken);
 
   res.status(200).json({
     status: "success",
