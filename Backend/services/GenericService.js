@@ -16,6 +16,16 @@ export const deleteOne = (Model) =>
     });
   });
 
+export const deactivateOne = (Model) =>
+  catchAsync(async (req, res, next) => {
+    await Model.findByIdAndUpdate(req.params.id, { active: false });
+
+    res.status(204).json({
+      status: "success",
+      data: "Account deactivated!",
+    });
+  });
+
 export const updateOne = (Model) =>
   catchAsync(async (req, res, next) => {
     const doc = await Model.findByIdAndUpdate(req.params.id, req.body, {
@@ -65,19 +75,26 @@ export const getOne = (Model, popOptions) =>
     });
   });
 
-export const getAll = (Model, options = null) =>
+export const getAll = (Model) =>
   catchAsync(async (req, res, next) => {
-    // To allow for nested GET reviews on tour (hack)
+    // To allow for nested GET reviews on doctor (hack)
     let filter = {};
-    // if (Model.modelName == "Doctor") {
-    //   filter = { isApproved: "approved" };
-    // }
-    // if (req.params.tourId) filter = { tour: req.params.tourId };
+    if (req.user) {
+      if (Model.modelName == "Doctor") {
+        if (req.user.role.includes("admin")) {
+          filter = {};
+        } else {
+          filter = { isApproved: "approved" };
+        }
+      }
+    }
 
-    const features = new APIFeatures(
-      Model.find(filter).setOptions(options),
-      req.query
-    )
+    if (req.params.doctorId)
+      filter = { ...filter, doctor: req.params.doctorId };
+
+    console.log(filter);
+
+    const features = new APIFeatures(Model.find(filter), req.query)
       .filter()
       .sort()
       .limitFields()
@@ -122,13 +139,31 @@ export const updateRole = (Model, destModel, newRole) =>
 
       await newUser.save({ validateBeforeSave: false });
     } else {
+      //   newUser = await Model.findById(req.params.id);
+      //   newUser.role = [...newUser.role, req.body.role];
+      //   newUser.save({ validateBeforeSave: false });
+
       newUser = await Model.findByIdAndUpdate(
         req.params.id,
         {
-          role: req.body.role,
+          //   $push: { roles: { $each: req.body.roles } },
+          $push: { role: req.body.role },
         },
         { new: true }
       );
+
+      if (!newUser)
+        return next(
+          new AppError("The user/doctor with that Id wasn't found", 404)
+        );
+
+      //   newUser = await Model.findByIdAndUpdate(
+      //     req.params.id,
+      //     {
+      //       role: req.body.role,
+      //     },
+      //     { new: true }
+      //   );
     }
 
     res.status(200).json({

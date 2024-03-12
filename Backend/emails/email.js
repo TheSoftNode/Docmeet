@@ -67,4 +67,16 @@ export default class Email {
   async accountReactivated() {
     await this.send("re-activation.ejs", "Account Reactivated!");
   }
+
+  async awaitApproval() {
+    await this.send("await-approval.ejs", "Await our Approval!");
+  }
+
+  async doctorApprovalRequest() {
+    await this.send("doctor-approval-request.ejs", "New Approval request!");
+  }
+
+  async doctorApproved() {
+    await this.send("doctor-approved.ejs", "Your request has been approved!");
+  }
 }

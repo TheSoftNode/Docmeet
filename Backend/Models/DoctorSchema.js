@@ -64,8 +64,9 @@ const DoctorSchema = new mongoose.Schema(
 
     ticketPrice: { type: Number },
     role: {
-      type: String,
+      type: [String],
       enum: ["doctor", "admin"],
+      default: ["doctor"],
     },
 
     // Fields for doctors only
@@ -104,6 +105,8 @@ const DoctorSchema = new mongoose.Schema(
   }
 );
 
+DoctorSchema.index({ role: 1 });
+
 DoctorSchema.pre("save", async function (next) {
   // Only run this function if password was actually modified
   if (!this.isModified("password") || !this.hashPassword) {
@@ -125,7 +128,8 @@ DoctorSchema.pre(/^find/, function (next) {
   // this points to the current query
   if (this.getOptions().role === "admin") return next();
 
-  this.find({ isApproved: "approved", active: { $ne: false } });
+  //   this.find({ isApproved: "approved", active: { $ne: false } });
+  this.find({ active: { $ne: false } });
   next();
 });
 

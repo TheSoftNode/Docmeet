@@ -3,6 +3,7 @@ import User from "../Models/UserSchema.js";
 import catchAsync from "./../utils/catchAsync.js";
 import AppError from "../errorHandlers/appError.js";
 import {
+  deactivateOne,
   deleteOne,
   getAll,
   getOne,
@@ -19,7 +20,7 @@ const filterObj = (obj, ...allowedFields) => {
   return newObj;
 };
 
-export const getMe = (req, res, next) => {
+export const getDoctorProfile = (req, res, next) => {
   req.params.id = req.user.id;
   next();
 };
@@ -54,15 +55,6 @@ export const updateMe = catchAsync(async (req, res, next) => {
     data: {
       doctor: updatedDoctor,
     },
-  });
-});
-
-export const deleteMe = catchAsync(async (req, res, next) => {
-  await Doctor.findByIdAndUpdate(req.user.id, { active: false });
-
-  res.status(204).json({
-    status: "success",
-    data: null,
   });
 });
 
@@ -106,12 +98,34 @@ export const createDoctor = (req, res) => {
   });
 };
 
-export const approveDoctor = catchAsync(async (req, res, next) => {});
+export const approveDoctor = catchAsync(async (req, res, next) => {
+  const doctor = await Doctor.findByIdAndUpdate(req.params.id, {
+    isApproved: "approved",
+  });
+
+  if (!doctor) return next(new AppError("Doctor not found", 404));
+
+  // send email to the doctor telling him that he/she has been approved
+  const data = {
+    user: { name: doctor.name },
+  };
+
+  await new Email(doctor, data).doctorApproved();
+
+  res.status(200).json({
+    status: "success",
+    data: {
+      message: "Doctor Approval successful",
+    },
+  });
+});
 
 export const getDoctor = getOne(Doctor, { path: "reviews" });
 export const getAllDoctors = getAll(Doctor);
+// export const getAllDoctorsByAdmin = getAll(Doctor, { role: "admin" });
 export const updateDoctorRole = updateRole(Doctor, User, "patient");
 
 // Do NOT update passwords with this!
 export const updateDoctor = updateOne(Doctor);
 export const deleteDoctor = deleteOne(Doctor);
+export const deActivateDoctor = deactivateOne(Doctor);

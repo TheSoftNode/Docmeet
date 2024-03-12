@@ -10,6 +10,7 @@ import {
 import Email from "../emails/email.js";
 import jwt from "jsonwebtoken";
 import { correctPassword } from "../services/passwordServices.js";
+import Notification from "../Models/notificationSchema.js";
 
 // Create activation token and the token
 export const createActivationToken = (user) => {
@@ -110,9 +111,56 @@ export const activateUser = catchAsync(async (req, res, next) => {
       gender,
     });
 
-    // Send a notification to the admin to verify approve the doctor
+    // send email to the doctor telling him to look out for the approval
+    const data = {
+      user: { name: user.name, role: user.role },
+    };
 
-    // Also, Send email to the admin to verify and approve the doctor
+    await new Email(user, data).awaitApproval();
+
+    // Send email to the admins to verify and approve the doctor
+    // 1) Find all the admins
+    const adminUser = await User.find({ role: "admin" });
+    const adminDoctor = await Doctor.find({ role: "admin" });
+
+    if (adminUser || adminDoctor) {
+      let adminEmails = [];
+
+      adminEmails = [
+        ...adminEmails,
+        ...adminUser.map((el) => {
+          return { email: el.email, name: el.name };
+        }),
+      ];
+      adminEmails = [
+        ...adminEmails,
+        ...adminDoctor.map((el) => {
+          return { email: el.email, name: el.name };
+        }),
+      ];
+
+      //   console.log(adminEmails);
+
+      adminEmails.forEach(async (el) => {
+        const approvalAdmin = {
+          email: el.email,
+        };
+
+        data.user.adminName = el.name;
+        await new Email(approvalAdmin, data).doctorApprovalRequest();
+      });
+    }
+
+    // Also, Send a notification to the admin to verify approve the doctor
+    const notification = {
+      doctor: user.id,
+      notificationType: "Approval",
+      title: "Verify and Approve a new Doctor",
+      message: "Please verify my credentials and kindly approve. Thanks.",
+      email: user.email,
+    };
+
+    await Notification.create(notification);
   }
 
   sendToken(user, 201, res);

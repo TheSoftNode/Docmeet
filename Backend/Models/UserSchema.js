@@ -56,9 +56,9 @@ const UserSchema = new mongoose.Schema(
     photo: { type: String, default: "default.jpg" },
 
     role: {
-      type: String,
+      type: [String],
       enum: ["patient", "admin"],
-      default: "patient",
+      default: ["patient"],
     },
 
     gender: { type: String, enum: ["male", "female", "other"] },
@@ -74,6 +74,8 @@ const UserSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+UserSchema.index({ role: 1 });
 
 UserSchema.pre("save", async function (next) {
   // Only run this function if password was actually modified

@@ -2,6 +2,7 @@ import User from "../Models/UserSchema.js";
 import catchAsync from "./../utils/catchAsync.js";
 import AppError from "../errorHandlers/appError.js";
 import {
+  deactivateOne,
   deleteOne,
   getAll,
   getOne,
@@ -10,6 +11,7 @@ import {
 } from "../services/GenericService.js";
 import Email from "../emails/email.js";
 import Doctor from "../Models/DoctorSchema.js";
+import Booking from "../Models/BookingSchema.js";
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -19,10 +21,28 @@ const filterObj = (obj, ...allowedFields) => {
   return newObj;
 };
 
-export const getMe = (req, res, next) => {
+export const getUserProfile = (req, res, next) => {
   req.params.id = req.user.id;
   next();
 };
+
+export const getMyAppointments = catchAsync(async (req, res) => {
+  // step -1 : retrieve appointments from booking for specific user
+  const bookings = await Booking.find({ user: req.user.id });
+
+  // step -2 : extract doctor ids from appointment bookings
+  const doctorIds = bookings.map((el) => el.doctor.id);
+
+  // step - 3 : retrieve doctors using doctor ids
+  const doctors = await Doctor.find({ _id: { $in: doctorIds } });
+
+  res.status(200).json({
+    status: "success",
+    data: {
+      doctors,
+    },
+  });
+});
 
 export const updateMe = catchAsync(async (req, res, next) => {
   // 1) Create error if user POSTs password data
@@ -52,54 +72,6 @@ export const updateMe = catchAsync(async (req, res, next) => {
     },
   });
 });
-
-export const deleteMe = catchAsync(async (req, res, next) => {
-  await User.findByIdAndUpdate(req.user.id, { active: false });
-
-  res.status(204).json({
-    status: "success",
-    data: null,
-  });
-});
-
-// export const updateUserRole = catchAsync(async (req, res, next) => {
-//   let newUser = null;
-
-//   if (req.body.role && req.body.role === "doctor") {
-//     const user = await User.findByIdAndDelete(req.params.id).select(
-//       "+password"
-//     );
-
-//     if (!user)
-//       return next(new AppError("The user with that ID doesn't exist", 404));
-
-//     const newDoctor = {
-//       email: user.email,
-//       name: user.name,
-//       password: user.password,
-//       hashPassword: false,
-//       role: "doctor",
-//       gender: user.gender,
-//     };
-
-//     newUser = new Doctor(newDoctor);
-
-//     await newUser.save({ validateBeforeSave: false });
-//   } else {
-//     newUser = await User.findByIdAndUpdate(
-//       req.params.id,
-//       {
-//         role: req.body.role,
-//       },
-//       { new: true }
-//     );
-//   }
-
-//   res.status(200).json({
-//     status: "success",
-//     data: newUser,
-//   });
-// });
 
 export const reactivateAccount = catchAsync(async (req, res, next) => {
   const user = await User.findOne({ email: req.body.email }).setOptions({
@@ -142,9 +114,10 @@ export const createUser = (req, res) => {
 };
 
 export const getUser = getOne(User);
-export const getAllUsers = getAll(User); //, { role: "admin" });
+export const getAllUsers = getAll(User);
 export const updateUserRole = updateRole(User, Doctor, "doctor");
 
 // Do NOT update passwords with this!
 export const updateUser = updateOne(User);
 export const deleteUser = deleteOne(User);
+export const deActivateUser = deactivateOne(User);

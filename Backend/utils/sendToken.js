@@ -28,7 +28,7 @@ const refreshTokenExpire = parseInt(
 
 // Prepare and send token to the user
 export const sendToken = (user, statusCode, res) => {
-  const accessToken = SignInAccessToken(user._id, user.role, "3m");
+  const accessToken = SignInAccessToken(user._id, user.role, "10m");
   const refreshToken = SignInRefreshToken(user._id, user.role, "3d");
 
   // Remove password from output
