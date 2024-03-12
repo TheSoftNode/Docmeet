@@ -14,8 +14,8 @@ import { BsArrowRight } from "react-icons/bs"
 import About from "../Components/About/About";
 import ServiceList from "../Components/Services/ServicesList";
 import DoctorList from "../Components/Doctors/DoctorList";
-import 
-  import Testimonial from "../Components/Testimonial/testimonial";
+import FaqList from "../Components/Faq/FaqList"
+import Testimonial from "../Components/Testimonial/testimonial";
 const Home = () => {
   return (
   <>
@@ -26,19 +26,22 @@ const Home = () => {
       <div className="flex flex-col lg:flex-row gap-[90px] items-center justify-between">
         {/* ====== hero content ======= */}
         <div>
-          <div className="lg:w-[570]">
-            <h1 className="text-[36px] leading-[46px] text-headingColor font-[800] md:text-[60px] md:leading-[70px]">
-            We help patients live a healthy, longer life
+          <div className="lg:w-[570px]">
+            <h1 className="text-[36px] leading-[36px] text-headingColor font-[800] md:text-[45px] md:leading-[55px]">
+            We help patients live a healthy, longer life.
             </h1>
             <p className="text_para">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat quasi unde repudiandae obcaecati quidem, impedit nisi minus excepturi sequi tenetur dolorum aspernatur blanditiis, nesciunt incidunt quam modi debitis. Architecto, saepe.
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat quasi
+             unde repudiandae obcaecati quidem, impedit nisi minus excepturi sequi 
+             tenetur dolorum aspernatur blanditiis, nesciunt incidunt quam modi 
+             debitis. Architecto, saepe.
             </p>
 
             <button className="btn">Request an Appointment</button>
           </div>
           {/* ====== hero counter ======= */}
 
-        <div className="mt-[30px] lg-mt-[70px] flex flex-col lg:flex-row lg:item-center gap-5 lg:gap-[30px]">
+        <div className="mt-[30px] lg:mt-[70px] flex flex-col lg:flex-row sm:flex-row sm:items-center sm:justify-evenly lg:items-center gap-5 lg:gap-[30px]">
 
           <div>
               <h2 className="text-[36px] leading-[56px] lg:text-[44px] lg:leading-[54px] font-[700] text-headingColor" >30+</h2>
@@ -80,6 +83,7 @@ const Home = () => {
   </section>
   {/* ====== hero section end ======== */}
 
+ {/* ====== Services ========== */}
   <section>
     <div className="container">
       <div className="lg:w-[470px] mx-auto">
@@ -87,11 +91,14 @@ const Home = () => {
           Providing the best medical services
         </h2>
         <p className="text_para text-center">
-          World-class care for everyone. Our health system offers unmatched, export healthcare.
+          World-class care for everyone. Our health system offers unmatched, 
+          export health care.
         </p>
       </div>
 
-      <div className="grid-grid-cols-1 md: grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-[30px] mt-[30px] mt[30px] lg:mt-[55px]">
+      {/* <div className="flex flex-wrap items-center flex-col md:flex-row gap-5 lg:gap-[30px] mt-[30px] lg:mt-[55px]"></div> */}
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-[30px] mt-[30px] mt[30px] lg:mt-[55px]">
 
       <div className="py-[30px] px-5">
         <div className="flex items-center justify-center">
@@ -154,16 +161,19 @@ const Home = () => {
       </div>
     </div>
   </section>
+  {/* ====== Services end ========== */}
 
+  {/* ========= */}
   <About />
 
-  {/* ===== service section ====== */}
+  {/* ===== services section ====== */}
   <section>
     <div className="container">
-      <div className="xl: w-[470] mx-auto">
+      <div className="xl:w-[470px] mx-auto">
         <h2 className="heading text-center">Our medical services</h2>
         <p className="text_para text-center">
-          World-class care for everyone. Our health services offers unmatched expert health care.
+          World-class care for everyone. Our health services offers unmatched 
+          expert health care.
         </p>
       </div>
 
@@ -201,29 +211,29 @@ const Home = () => {
         <div className="relative z-10 xl:w-[770px] flex justify-end mt-[50px] lg:mt-0">
         <img src={featureImg} className="w-3/4" alt="" /> 
 
-        <div className="w-[150px] lg:w[248px] bg-white absolute bottom-[50px] md:left-5 z-20 p-2 pb-3 lg:pt-4 lg:px-4 lg:pb-[26px] rounded-[10px]">
+        <div className="w-[150px]  lg:w-[248px] bg-white absolute bottom-[50px] left-0 md:bottom-[100px] md:left-5 z-20 p-2 pb-3 lg:pt-4 lg:px-4 lg:pb-[26px] rounded-[10px]">
 
          <div className="flex items-center justify-between">
           <div className="flex items-center gap-[6px] lg:gap-3">
             <p className="text-[10px] leading-[10px] lg:text-[14px] lg:leading-5 text-headingColor font-[600]">
               Tue, 24
             </p>
-            <p className=" text-[10px] leading-[10px] lg:text-[14px] lg:leading-5 text-headingColor font-[400]">
+            <p className=" text-[10px] leading-[10px] lg:text-[14px] lg:leading-5 text-textColor font-[400]">
               10:00AM
             </p>
           </div>
           <span className="w-5 h-5 lg:w-[34px] lg:h-[34px] flex items-center justify-center bg-yellowColor rounded py-1 px-[6px] lg:py-3 lg:px-[9px]">
             <img src={videoIcon} alt="" />
           </span> 
-          </div>
+        </div>
 
-           <div className="w-[65px] lg:w-[96px] bg-[#CCF0F3] py-1 px-2 lg:py-[6px] lg:px-[10px] text-[8px] leading-[8px] lg:text-[12px] lg:leading-4 text-irisBlueColor font-[500] mt-2 lg:mt-4">
+           <div className="w-[65px] lg:w-[96px] bg-[#CCF0F3] py-1 px-2 lg:py-[6px] lg:px-[10px] text-[8px] leading-[8px] lg:text-[12px] lg:leading-4 text-irisBlueColor font-[500] mt-2 lg:mt-4 rounded-full">
             Consultation
            </div>
 
            <div className="flex items-center gap-[6px] lg:gap-[10px] mt-2 lg:mt-[18px]">
-            <img src="avatarIcon" alt="" />
-            <h4 className="text-[10px] leading-3 lg-text-[16px] lg:leading-[22px] font-[700] text-headingColor">
+            <img src={avatarIcon} alt="" />
+            <h4 className="text-[10px] leading-3 lg:text-[16px] lg:leading-[22px] font-[700] text-headingColor">
               Wayne Collins
             </h4>
            </div>
@@ -249,7 +259,6 @@ const Home = () => {
   {/* ======== our great doctors =========== */}
 
   {/* ========== faq section ========== */}
-
   <section>
     <div className="container">
       <div className="flex justify-between gap-[50px] lg:gap-0">
@@ -272,7 +281,7 @@ const Home = () => {
   {/* ========= testimonial ========= */}
   
   <section>
-      <div className="conatiner">
+      <div className="container">
       <div className="xl: w-[470] mx-auto">
       <h2 className="heading text-center">What our patients say</h2>
       <p className="text_para text-center">

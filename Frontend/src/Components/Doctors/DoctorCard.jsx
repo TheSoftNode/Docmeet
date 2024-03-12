@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { BsArrowRight } from "react-icons/bs";
 
 const DoctorCard = ( {doctor} ) => {
-  const {name, avgRating, totalRating, photo, specialization, totalPatient, hospital} = doctor
+  const {name, avgRating, totalRating, photo, specialization, totalPatients, hospital} = doctor
 
 
   return (
@@ -13,20 +13,20 @@ const DoctorCard = ( {doctor} ) => {
         <img src={photo} className="w-full" alt="" />
       </div>
 
-    <h2 className="text-[18px] leading-[30px] lg:text-[26px] lg:leading-9 text-headingColor font-[700] mt-3 lg:mt-5">
+    <h2 className="text-[18px] leading-[30px] lg:text-[20px] lg:leading-7 text-headingColor font-[700] mt-3 lg:mt-5">
       {name}
     </h2>
 
     <div className="mt-2 lg:mt-4 flex items-center justify-between">
-      <span className="bg-[#CCF0F3] text-irisBlueColor py-1 px-2 lg:py-2 lg:px-6 text-[12px] leading-4 lg:text-[16px] lg:leading-7 font-semibold rounded">
+      <span className="bg-[#CCF0F3] text-irisBlueColor py-1 px-2 lg:py-1 lg:px-4 text-[12px] leading-6 lg:text-[13px] lg:leading-6 font-semibold rounded">
         {specialization}
       </span>
 
 <div className="flex items-center gap-[6px]">
-    <span className="flex items-center gap-[6px] text-[14px] leading-6 lg:text-[16px] lg:leading-7 font-semibold text-headingColor">
-    <img src={starIcon} alt="" /> {avgRating}
+    <span className="flex items-center gap-[6px] text-[14px] leading-6 lg:text-[13px] lg:leading-6 font-semibold text-headingColor">
+        <img src={starIcon} alt="" className="lg:w-[30%] lg:h-[30%]" /> {avgRating}
     </span>
-    <span className="text-[14px] leading-6 lg:text-[16px] lg:leading-7 font-[400] text-textColor">
+    <span className="text-[14px] mx-auto leading-6 lg:text-[12px] lg:leading-5 font-[400] text-textColor">
     ({totalRating})
     </span>
 </div>
@@ -38,7 +38,7 @@ const DoctorCard = ( {doctor} ) => {
     <h3 className="text-[16px] leading-7 lg:text-[18px] lg:leading-[30px] font-semibold text-headingColor">
       +{totalPatients} patients
     </h3>
-    <p className="text-[14px] leading-6 fony-[400] text-textColor">
+    <p className="text-[14px] leading-6 font-[400] text-textColor">
       At {hospital}
     </p>
     </div>
@@ -51,3 +51,5 @@ const DoctorCard = ( {doctor} ) => {
 </div>
   );
 };
+
+export default DoctorCard;

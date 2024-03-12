@@ -1,24 +1,24 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import logo from "../../assets/images/logo.png";
-import { RiLinkedFill } from "react-icons/ri";
+import { RiLinkedinFill } from "react-icons/ri";
 import {AiFillYoutube, AiFillGithub, AiOutlineInstagram } from "react-icons/ai";
 
 const socialLinks = [
   {
-    path: "https://www.youtube.com/c/codingWithMuhib"
-    icon: <AifillYoutube className="group-hover:text-white w-4 h-5" />
+    path: "https://www.youtube.com/c/codingWithMuhib",
+    icon: <AiFillYoutube className="group-hover:text-white w-4 h-5" />
   },
   {
-    path: "https://github.com/codingWithMuhib"
+    path: "https://github.com/codingWithMuhib",
     icon: <AiFillGithub className="group-hover:text-white w-4 h-5" />
   },
   {
-    path: "https://www.instagram.com/muhib160.official/"
+    path: "https://www.instagram.com/muhib160.official/",
     icon: <AiOutlineInstagram className="group-hover:text-white w-4 h-5" />
   },
   {
-    path: "https://www.linkedin.com/in/codingWithhuhib"
+    path: "https://www.linkedin.com/in/codingWithhuhib",
     icon: <RiLinkedinFill className="group-hover:text-white w-4 h-5" />
   },
 ];
@@ -33,7 +33,7 @@ const quickLinks01 = [
     display: "About Us",
   },
   {
-    path: "/services"
+    path: "/services",
     display: "Services"
   },
   {
@@ -105,11 +105,11 @@ const Footer = () => {
           </h2>
 
           <ul>
-            {quickLinks01.map((items, index) => (
+            {quickLinks01.map((item, index) => (
 
             <li key={index} className="mb-4">
               <Link
-                to={items.path}
+                to={item.path}
                 className="text-[16px] leading-7 font-[400] text-textColor"
               >
                 {item.display}
@@ -124,11 +124,11 @@ const Footer = () => {
           </h2>
 
           <ul>
-            {quickLinks02.map((items, index) => (
+            {quickLinks02.map((item, index) => (
 
             <li key={index} className="mb-4">
               <Link
-                to={items.path}
+                to={item.path}
                 className="text-[16px] leading-7 font-[400] text-textColor"
               >
                 {item.display}
@@ -143,11 +143,11 @@ const Footer = () => {
           </h2>
 
           <ul>
-            {quickLinks03.map((items, index) => (
+            {quickLinks03.map((item, index) => (
 
             <li key={index} className="mb-4">
               <Link
-                to={items.path}
+                to={item.path}
                 className="text-[16px] leading-7 font-[400] text-textColor"
               >
                 {item.display}
