@@ -30,7 +30,10 @@ const Signup = () => {
     } 
 
     const submitHandler = async e => {
-        e.preventDefault
+
+        e.preventDefault()
+        console.log(formData);
+
     }
 
 
@@ -106,7 +109,7 @@ const Signup = () => {
                             <input 
                                 type="password" 
                                 placeholder="Confirm Password"
-                                name="password"
+                                name="confirmPassword"
                                 value={formData.confirmPassword}
                                 onChange={handleInputChange}
                                 required
