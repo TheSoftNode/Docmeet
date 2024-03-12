@@ -1,12 +1,22 @@
 import React, { useState } from "react";
+import {useNavigate} from "react-router-dom";
 import signupImg from "../assets/images/signup.gif";
-import avatar from "../assets/images/doctor-img01.png";
 import { Link } from "react-router-dom";
+import uploadImageToCloudinary from "../utils/uploadCloudinary";
+import { BASE_URL } from "../config";
+import {toast} from "react-toastify";
+import HashLoader from "react-spinners/HashLoader"
+import * as Yup from 'yup';
 
 const Signup = () => {
 
     const [selectedFile, setSelectedFile] = useState(null)
     const [previewUrl, setPreviewUrl] = useState("")
+    const [loading, setLoading] = useState(false);
+    const [formErrors, setFormErrors] = useState(null);
+
+    const navigate = useNavigate()
+
     const [formData, setFormData] = useState({
         name: "",
         email: "",
@@ -17,6 +27,19 @@ const Signup = () => {
         role: "patient"
     })
 
+
+    const schema = Yup.object().shape({
+        name: Yup.string().required("Please enter your name"),
+        email: Yup.string()
+          .email("Invalid email!")
+          .required("Please enter your email!"),
+        password: Yup.string().required("Please enter your password!").min(6),
+        confirmPassword: Yup.string()
+          .required("Please confirm Your password")
+          .oneOf([Yup.ref("password")], "Passwords must match"),
+        gender: Yup.string().required("Select your gender")
+      });
+
     const handleInputChange = e => {
         setFormData({...formData, [e.target.name]: e.target.value})
     }
@@ -24,15 +47,53 @@ const Signup = () => {
     const handleFileInputChange = async (e) => {
         const file = e.target.files[0];
 
-        // later we will use cloudinary to upload image
+        const data = await uploadImageToCloudinary(file);
         
-        console.log(file)
+        setPreviewUrl(data.url);
+        setSelectedFile(data.url)
+        setFormData({...formData, photo:data.url})
     } 
 
     const submitHandler = async e => {
 
         e.preventDefault()
-        console.log(formData);
+        setLoading(true);
+
+
+        try{
+            await schema.validate(formData, { abortEarly: false });
+
+            const res = await fetch(`${BASE_URL}/auth/signUp`, {
+                method: 'post',
+                headers: {
+                    "Content-Type" : "application/json"
+                },
+                body: JSON.stringify(formData)
+            })
+
+            const {message} = await res.json();
+
+            if (!res.ok){
+                throw new Error(message)
+            }
+
+            setLoading(false);
+            toast.success(message)
+            navigate("/login");
+        }
+        catch(err){
+            if (err instanceof Yup.ValidationError) {
+                const errors = {};
+                err.inner.forEach(e => {
+                    errors[e.path] = e.message;
+                });
+                setFormErrors(errors);
+            }
+            else {
+                toast.error(err.message);
+            }
+            setLoading(false)
+        }
 
     }
 
@@ -76,6 +137,9 @@ const Signup = () => {
                                 text-headingColor placeholder:text-textColor  cursor-pointer"
                             />
                         </div>
+                        {formErrors && formErrors.name && (
+                            <span className="text-red-500 pt-2 block">{formErrors.name}</span>
+                        )}
 
                         <div className="mb-5">
                             <input 
@@ -90,6 +154,9 @@ const Signup = () => {
                                 text-headingColor placeholder:text-textColor  cursor-pointer"
                             />
                         </div>
+                        {formErrors && formErrors.email && (
+                            <span className="text-red-500 pt-2 block">{formErrors.email}</span>
+                        )}
 
                         <div className="mb-5">
                             <input 
@@ -104,6 +171,9 @@ const Signup = () => {
                                 text-headingColor placeholder:text-textColor  cursor-pointer"
                             />
                         </div>
+                        {formErrors && formErrors.password  && (
+                            <span className="text-red-500 pt-2 block">{formErrors.password}</span>
+                        )}
 
                         <div className="mb-5">
                             <input 
@@ -118,6 +188,9 @@ const Signup = () => {
                                 text-headingColor placeholder:text-textColor  cursor-pointer"
                             />
                         </div>
+                        {formErrors && formErrors.confirmPassword && (
+                            <span className="text-red-500 pt-2 block">{formErrors.confirmPassword}</span>
+                        )}
 
                         <div className="mb-5 flex items-center justify-between">
                             <label 
@@ -156,20 +229,24 @@ const Signup = () => {
                                     <option value="other">Other</option>
 
                                 </select>
+                                {formErrors && formErrors.gender && (
+                                    <span className="text-red-500 pt-2 block">{formErrors.gender}</span>
+                                )}
                             </label>
+
                         </div>
 
                         <div className="mb-5 flex items-center gap-3">
-                            <figure 
+                            { selectedFile && (<figure 
                                 className="w-[60px] h-[60px] rounded-full border-2 border-solid
                                 border-primaryColor flex items-center justify-center"
                             >
                                 <img 
-                                    src={avatar} 
+                                    src={previewUrl} 
                                     className="w-full rounded-full"
                                     alt="" 
                                 />
-                            </figure>
+                            </figure>)}
 
                             <div className="relative w-[130px] h-[50px]">
                                 <input 
@@ -195,10 +272,11 @@ const Signup = () => {
 
                         <div className="mt-7">
                             <button
+                                disabled={loading && true}
                                 type="submit"
                                 className="w-full bg-primaryColor text-white text-[18px] leading-[30px] rounded-lg px-4 py-3"
                             >
-                                Sign Up
+                                { loading ? <HashLoader size={35} color="#ffffff" /> :  "Sign Up"}
                             </button>
                         </div>
 

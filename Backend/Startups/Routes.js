@@ -7,7 +7,7 @@ import notificationRouter from "../routes/notificationRoute.js";
 
 export const mountedRoutes = function (app) {
   app.use(express.json());
-  app.use("/api/v1/userAuth", authRouter);
+  app.use("/api/v1/auth", authRouter);
   app.use("/api/v1/users", userRouter);
   app.use("/api/v1/doctors", doctorRouter);
   app.use("/api/v1/reviews", reviewRouter);

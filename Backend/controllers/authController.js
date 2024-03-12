@@ -29,7 +29,10 @@ export const createActivationToken = (user) => {
 
 // Verify Account before saving it.
 export const signUp = catchAsync(async (req, res, next) => {
-  const { email, name, password, confirmPassword, role, gender } = req.body;
+  const { email, name, password, confirmPassword, role, gender, photo } =
+    req.body;
+
+  console.log(req.body);
 
   const allowedRole = ["patient", "doctor"];
   if (!allowedRole.includes(req.body.role)) {
@@ -50,6 +53,7 @@ export const signUp = catchAsync(async (req, res, next) => {
     confirmPassword,
     role,
     gender,
+    photo,
   };
 
   const { activationToken, activationCode } = createActivationToken(user);
@@ -88,7 +92,8 @@ export const activateUser = catchAsync(async (req, res, next) => {
   if (newUser.activationCode != activation_code)
     return next(new AppError("Invalid token. Please try again", 401));
 
-  const { email, name, password, confirmPassword, role, gender } = newUser.user;
+  const { email, name, password, confirmPassword, role, gender, photo } =
+    newUser.user;
 
   let user = null;
 
@@ -100,6 +105,7 @@ export const activateUser = catchAsync(async (req, res, next) => {
       confirmPassword,
       role,
       gender,
+      photo,
     });
   } else if (role === "doctor") {
     user = await Doctor.create({
@@ -109,6 +115,7 @@ export const activateUser = catchAsync(async (req, res, next) => {
       confirmPassword,
       role,
       gender,
+      photo,
     });
 
     // send email to the doctor telling him to look out for the approval
