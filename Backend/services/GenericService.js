@@ -60,7 +60,14 @@ export const createOne = (Model) =>
 export const getOne = (Model, popOptions) =>
   catchAsync(async (req, res, next) => {
     let query = Model.findById(req.params.id);
-    if (popOptions) query = query.populate(popOptions);
+
+    if (popOptions) {
+      popOptions.forEach((option) => {
+        query = query.populate(popOptions);
+      });
+    }
+
+    // if (popOptions) query = query.populate(popOptions);
     const doc = await query;
 
     if (!doc) {
@@ -80,7 +87,7 @@ export const getAll = (Model) =>
     // To allow for nested GET reviews on doctor (hack)
     let filter = {};
     if (req.user) {
-      if (Model.modelName == "Doctor") {
+      if (Model.modelName === "Doctor") {
         if (req.user.role.includes("admin")) {
           filter = {};
         } else {
@@ -89,10 +96,12 @@ export const getAll = (Model) =>
       }
     }
 
+    if (!req.user && Model.modelName === "Doctor") {
+      filter = { isApproved: "approved" };
+    }
+
     if (req.params.doctorId)
       filter = { ...filter, doctor: req.params.doctorId };
-
-    console.log(filter);
 
     const features = new APIFeatures(Model.find(filter), req.query)
       .filter()

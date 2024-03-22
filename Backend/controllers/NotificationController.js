@@ -1,6 +1,6 @@
 import AppError from "../errorHandlers/appError.js";
 import catchAsync from "../utils/catchAsync.js";
-import { createOne, getAll } from "../services/GenericService.js";
+import { createOne, deleteOne, getAll } from "../services/GenericService.js";
 import Notification from "../Models/notificationSchema.js";
 
 export const setNotificationCreatedByAndEmail = (req, res, next) => {
@@ -12,6 +12,7 @@ export const setNotificationCreatedByAndEmail = (req, res, next) => {
 
 export const createNotification = createOne(Notification);
 export const getAllNotifications = getAll(Notification);
+export const deleteNotifications = deleteOne(Notification);
 
 export const getNotification = catchAsync(async (req, res, next) => {
   const notification = await Notification.findById(req.params.id);

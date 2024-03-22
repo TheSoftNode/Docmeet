@@ -11,7 +11,10 @@ import {
   getDoctorProfile,
   deActivateDoctor,
   approveDoctor,
-  //   getAllDoctorsByAdmin,
+  getAllDoctorsByAdmin,
+  requestApproval,
+  revokeDoctorApproval,
+  cancelDoctorApprovalRequest,
 } from "../controllers/doctorController.js";
 import { isAuthenticated } from "../middlewares/protectRoutes.js";
 import restrictTo from "../middlewares/roleManager.js";
@@ -22,7 +25,11 @@ const router = express.Router();
 router.use("/:doctorId/reviews", reviewRouter);
 
 // Ensure that all the routes below are authenticated
+
+router.route("/").get(getAllDoctors);
+
 router.use(isAuthenticated);
+router.route("/:id").get(getDoctor);
 router.get("/profile/me", restrictTo("doctor"), getDoctorProfile, getDoctor);
 router.patch("/update-me", updateMe);
 router.delete(
@@ -38,17 +45,20 @@ router.delete(
   deActivateDoctor
 );
 
-router.route("/").get(getAllDoctors);
-router.route("/:id").get(getDoctor);
+router
+  .route("/doctor-approval-request")
+  .post(restrictTo("doctor"), requestApproval);
 
 // Restrict the endpoints below to admin access only
 router.use(restrictTo("admin"));
 router.route("/").post(createDoctor);
-// router.route("/all-doctors/admin").get(getAllDoctorsByAdmin);
+router.route("/all-doctors/admin").get(getAllDoctorsByAdmin);
 router.route("/:id").patch(updateDoctor).delete(deleteDoctor);
 router.route("/deactivate/:id").delete(deActivateDoctor);
 
 router.route("/approve/:id").patch(approveDoctor);
+router.route("/revoke/:id").patch(revokeDoctorApproval);
+router.route("/cancel/:id").patch(cancelDoctorApprovalRequest);
 
 router.route("/update-doctor-role/:id").patch(updateDoctorRole);
 

@@ -79,7 +79,7 @@ const DoctorSchema = new mongoose.Schema(
       type: Array,
     },
 
-    bio: { type: String, maxLength: 50 },
+    bio: { type: String, maxLength: 200 },
     about: { type: String },
     timeSlots: { type: Array },
     // reviews: [{ type: mongoose.Types.ObjectId, ref: "Review" }],
@@ -93,10 +93,10 @@ const DoctorSchema = new mongoose.Schema(
     },
     isApproved: {
       type: String,
-      enum: ["pending", "approved", "cancelled"],
+      enum: ["pending", "approved", "revoked", "cancelled"],
       default: "pending",
     },
-    appointments: [{ type: mongoose.Types.ObjectId, ref: "Appointment" }],
+    // appointments: [{ type: mongoose.Types.ObjectId, ref: "Booking" }],
   },
   {
     toJSON: { virtuals: true },
@@ -136,6 +136,12 @@ DoctorSchema.pre(/^find/, function (next) {
 // Virtual populate
 DoctorSchema.virtual("reviews", {
   ref: "Review",
+  foreignField: "doctor",
+  localField: "_id",
+});
+
+DoctorSchema.virtual("appointments", {
+  ref: "Booking",
   foreignField: "doctor",
   localField: "_id",
 });

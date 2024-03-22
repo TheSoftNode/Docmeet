@@ -53,13 +53,13 @@ reviewSchema.statics.calcAverageRatings = async function (doctorId) {
 
   if (stats.length > 0) {
     await Doctor.findByIdAndUpdate(doctorId, {
-      ratingsQuantity: stats[0].nRating,
-      ratingsAverage: stats[0].avgRating,
+      totalRating: stats[0].nRating,
+      averageRating: stats[0].avgRating,
     });
   } else {
     await Doctor.findByIdAndUpdate(doctorId, {
-      ratingsQuantity: 0,
-      ratingsAverage: 4.5,
+      totalRating: 0,
+      averageRating: 4.5,
     });
   }
 };
@@ -68,6 +68,10 @@ reviewSchema.post("save", function () {
   // this points to current review
   this.constructor.calcAverageRatings(this.doctor);
 });
+
+// reviewSchema.pre(/findByIdAndDelete/, async function(next){
+
+// })
 
 const Review = mongoose.model("Review", reviewSchema);
 export default Review;

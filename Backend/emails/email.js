@@ -77,6 +77,23 @@ export default class Email {
   }
 
   async doctorApproved() {
-    await this.send("doctor-approved.ejs", "Your request has been approved!");
+    await this.send(
+      "doctor-approved.ejs",
+      " Congrats! DOCmeet Doctor request has been approved. Thank you!"
+    );
+  }
+
+  async doctorApprovalRequestCancelled() {
+    await this.send(
+      "doctor-cancelled.ejs",
+      "DOCmeet Doctor approval request cancelled!"
+    );
+  }
+
+  async doctorRevoked() {
+    await this.send(
+      "doctor-revoked.ejs",
+      "DOCmeet Doctor status has been revoked! Find out why."
+    );
   }
 }

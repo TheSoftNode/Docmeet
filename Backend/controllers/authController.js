@@ -20,7 +20,7 @@ export const createActivationToken = (user) => {
     { user, activationCode },
     process.env.VERIFY_EMAIL_SECRET,
     {
-      expiresIn: process.env.JWT_EXPIRES_IN,
+      expiresIn: process.env.VERIFY_EMAIL_EXPIRES_IN,
     }
   );
 
@@ -83,6 +83,8 @@ export const activateUser = catchAsync(async (req, res, next) => {
     req.headers.authorization.startsWith("Bearer")
   ) {
     activation_token = req.headers.authorization.split(" ")[1];
+  } else {
+    activation_token = req.body.activation_token;
   }
 
   const { activation_code } = req.body;
@@ -117,57 +119,6 @@ export const activateUser = catchAsync(async (req, res, next) => {
       gender,
       photo,
     });
-
-    // send email to the doctor telling him to look out for the approval
-    const data = {
-      user: { name: user.name, role: user.role },
-    };
-
-    await new Email(user, data).awaitApproval();
-
-    // Send email to the admins to verify and approve the doctor
-    // 1) Find all the admins
-    const adminUser = await User.find({ role: "admin" });
-    const adminDoctor = await Doctor.find({ role: "admin" });
-
-    if (adminUser || adminDoctor) {
-      let adminEmails = [];
-
-      adminEmails = [
-        ...adminEmails,
-        ...adminUser.map((el) => {
-          return { email: el.email, name: el.name };
-        }),
-      ];
-      adminEmails = [
-        ...adminEmails,
-        ...adminDoctor.map((el) => {
-          return { email: el.email, name: el.name };
-        }),
-      ];
-
-      //   console.log(adminEmails);
-
-      adminEmails.forEach(async (el) => {
-        const approvalAdmin = {
-          email: el.email,
-        };
-
-        data.user.adminName = el.name;
-        await new Email(approvalAdmin, data).doctorApprovalRequest();
-      });
-    }
-
-    // Also, Send a notification to the admin to verify approve the doctor
-    const notification = {
-      doctor: user.id,
-      notificationType: "Approval",
-      title: "Verify and Approve a new Doctor",
-      message: "Please verify my credentials and kindly approve. Thanks.",
-      email: user.email,
-    };
-
-    await Notification.create(notification);
   }
 
   sendToken(user, 201, res);

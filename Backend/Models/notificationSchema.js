@@ -46,13 +46,15 @@ const notificationSchema = mongoose.Schema(
   { timestamps: true }
 );
 
+// notificationSchema.index({ email: 1, notificationType: 1 }, { unique: true });
+
 notificationSchema.pre(/^find/, function (next) {
   this.populate({
     path: "doctor",
     select: "name photo",
   }).populate({
     path: "user",
-    select: "name photo",
+    select: "name photo ",
   });
   next();
 });

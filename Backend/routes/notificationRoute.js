@@ -1,6 +1,7 @@
 import express from "express";
 import {
   createNotification,
+  deleteNotifications,
   getAllNotifications,
   getNotification,
   setNotificationCreatedByAndEmail,
@@ -21,6 +22,6 @@ router
 router.use(restrictTo("admin"));
 
 router.route("/").get(getAllNotifications);
-router.route("/:id").get(getNotification);
+router.route("/:id").get(getNotification).delete(deleteNotifications);
 
 export default router;

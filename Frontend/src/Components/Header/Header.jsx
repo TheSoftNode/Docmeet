@@ -1,8 +1,9 @@
-import { useEffect, useRef }from "react";
-import logo from "../../assets/images/logo.png";
-import userImg from "../../assets/images/avatar-icon.png";
+import { useEffect, useRef, useContext }from "react";
+import logo2 from "../../assets/Logos/Color logo - no background.svg";
+// import logo2 from "../../assets/Logos/Color logo with background.svg";
 import { Link, NavLink } from 'react-router-dom';
 import { BiMenu } from "react-icons/bi";
+import { authContext } from "../../context/AuthContext";
 
 
 const navLinks = [
@@ -28,17 +29,19 @@ const Header = () => {
 
   const headerRef = useRef(null)
   const menuRef = useRef(null)
+  const { user, token } = useContext(authContext);
 
   const handleStickyHeader = () => {
     window.addEventListener('scroll', () =>{
     if(document.body.scrollTop > 80 || document.documentElement.scrollTop > 80)
     {
-        headerRef.current.classList.add('sticky_header');
+        headerRef?.current?.classList?.add('sticky_header');
   } else{
-    headerRef.current.classList.remove('sticky_header')
+    headerRef?.current?.classList?.remove('sticky_header')
   }
   })
 }
+
 
 useEffect(() =>{
   handleStickyHeader()
@@ -54,7 +57,7 @@ const toggleMenu = ()=> menuRef.current.classList.toggle('show_menu')
         <div className="flex items-center justify-between">
           {/* ====== logo ======= */}
           <div>
-            <img src={logo} alt="" />
+            <img src={logo2} alt="" className="w-[50%] sm:w-[200px] text-green"/>
           </div>
 
           {/* ======= menu ========= */}
@@ -65,7 +68,7 @@ const toggleMenu = ()=> menuRef.current.classList.toggle('show_menu')
                     <NavLink to={link.path} className={navClass=> navClass.isActive ? "text-primaryColor text-[16px] leading-7 font-[600]" : "text-textColor text-[16px] leading-7 font-[500] hover:text-primaryColor"}
                     >
                       {link.display}
-                      </NavLink>
+                    </NavLink>
                   </li>
                 ))}  
               </ul>
@@ -74,20 +77,24 @@ const toggleMenu = ()=> menuRef.current.classList.toggle('show_menu')
 
           {/* ====== nav right ======== */}
           <div className="flex items-center gap-4">
-            <div className="hidden">
-              <Link to='/'>
-                <figure className="w-[35px] h-[35px] rounded-full cursor-pointer">
-                  <img src={userImg} className="w-full rounded-full" alt="" />
-                </figure>
-                </Link>
-            </div>
+            {token && user ? (<div >
+              <Link to={`${user?.role?.includes("doctor") ? "/doctors/profile/me" : "/users/profile/me"}`}>
+                
+               { user.photo !== null && user.photo !== "default.jpg"
+                    ? (<figure className="w-[39px] h-[39px] rounded-full cursor-pointer">
+                            <img src={user?.photo} className="w-[39px] h-[39px] rounded-full" alt="" />
+                        </figure>) 
+                    : (<p> Hi {user.name}</p>)
+                }
 
-
-          <Link to='/login'>
-            <button className="bg-primaryColor py-2 px-6 text-white font-[600] h-[44px] flex items-center justify-center rounded-[50px]">
-              Login
-            </button>
-          </Link>
+              </Link>
+            </div>):(
+                <Link to='/login'>
+                <button className="bg-primaryColor py-2 px-6 text-white font-[600] h-[44px] flex items-center justify-center rounded-[50px]">
+                  Login
+                </button>
+              </Link>
+            )}
 
           <span className="md:hidden" onClick={toggleMenu}>
               <BiMenu className='w-6 h-6 cursor-pointer' />

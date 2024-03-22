@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {useNavigate} from "react-router-dom";
 import signupImg from "../assets/images/signup.gif";
 import { Link } from "react-router-dom";
@@ -7,6 +7,7 @@ import { BASE_URL } from "../config";
 import {toast} from "react-toastify";
 import HashLoader from "react-spinners/HashLoader"
 import * as Yup from 'yup';
+import { authContext } from "../context/AuthContext";
 
 const Signup = () => {
 
@@ -16,6 +17,7 @@ const Signup = () => {
     const [formErrors, setFormErrors] = useState(null);
 
     const navigate = useNavigate()
+    const {dispatch} = useContext(authContext);
 
     const [formData, setFormData] = useState({
         name: "",
@@ -71,15 +73,26 @@ const Signup = () => {
                 body: JSON.stringify(formData)
             })
 
-            const {message} = await res.json();
+            const result = await res.json();
 
-            if (!res.ok){
-                throw new Error(message)
+            if(res.ok){
+                dispatch({
+                    type: "ACTIVATE_USER",
+                    payload: {
+                        activationToken: result.activationToken,
+                        activationCode: result.activationCode,
+                    }
+                })
+
+                setLoading(false);
+                toast.success(result.message)
+                navigate("/verify");
             }
-
-            setLoading(false);
-            toast.success(message)
-            navigate("/login");
+            else {
+                toast.error(result.message);
+                setLoading(false);
+                console.log(result);
+            }
         }
         catch(err){
             if (err instanceof Yup.ValidationError) {
@@ -99,10 +112,10 @@ const Signup = () => {
 
 
   return (
-    <section className="px-5 xl:px-0">
+    <section className="px-5 xl:px-0 py-0">
 
         <div className="max-w-[1170px] mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-2">
+            <div className="grid grid-cols-1 md:place-items-center lg:grid-cols-2">
                 {/* ====== img box ======= */}
                 <div className="hidden lg:block bg-primaryColor rounded-l-lg">
                     <figure className="rounded-l-lg">
@@ -115,8 +128,8 @@ const Signup = () => {
                 </div>
 
                 {/* ======== sign up form ======= */}
-                <div className="rounded-l-lg lg:pl-16 py-10">
-                    <h3 className="text-headingColor text-[22px] leading-9 font-bold mb-10">
+                <div className="rounded-l-lg lg:pl-16 py-8 shadow-md lg:shadow-none lg:px-5 md:w-[80%] px-7 lg:w-full">
+                    <h3 className="text-headingColor text-[22px] leading-9 font-bold mb-8">
                         Create an
                         <span className="text-primaryColor px-2">
                             account
@@ -238,12 +251,12 @@ const Signup = () => {
 
                         <div className="mb-5 flex items-center gap-3">
                             { selectedFile && (<figure 
-                                className="w-[60px] h-[60px] rounded-full border-2 border-solid
+                                className="w-[70px] h-[70px] rounded-full border-2 border-solid
                                 border-primaryColor flex items-center justify-center"
                             >
                                 <img 
                                     src={previewUrl} 
-                                    className="w-full rounded-full"
+                                    className="w-[70px] h-[70px] rounded-full"
                                     alt="" 
                                 />
                             </figure>)}

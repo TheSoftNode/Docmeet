@@ -69,7 +69,10 @@ const UserSchema = new mongoose.Schema(
       select: false,
     },
 
-    bloodType: { type: String },
+    bloodType: {
+      type: String,
+      default: "",
+    },
     appointments: [{ type: mongoose.Types.ObjectId, ref: "Booking" }],
   },
   { timestamps: true }

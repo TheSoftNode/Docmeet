@@ -19,7 +19,7 @@ const router = express.Router();
 
 // Ensure that all the routes below are authenticated
 router.use(isAuthenticated);
-router.get("/profile/me", restrictTo(["patient"]), getUserProfile, getUser);
+router.get("/profile/me", restrictTo("patient"), getUserProfile, getUser);
 router.get(
   "/appointments/my-appointments",
   restrictTo("patient"),

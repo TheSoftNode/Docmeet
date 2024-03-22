@@ -16,6 +16,7 @@ const DB_storage = process.env.DB_storage.replace(
   "<password>",
   process.env.PASSWORD
 );
+const DB_storage_local = process.env.DB_storage_local;
 
 // Create a port
 const port = process.env.PORT || 3000;
