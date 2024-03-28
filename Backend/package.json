@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node ./StartUps/Server.js",
     "dev": "nodemon ./StartUps/Server.js",
-    "prod": "nodemon ./StartUps/Server.js"
+    "build": "nodemon ./StartUps/Server.js"
   },
   "repository": {
     "type": "git",
