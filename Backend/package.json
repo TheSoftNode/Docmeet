@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "description": "Docmeet backend packages",
   "type": "module",
-  "main": "StartUps/Server.js",
+  "main": "index.js",
   "scripts": {
-    "start": "node ./StartUps/Server.js",
-    "dev": "nodemon ./StartUps/Server.js",
-    "build": "nodemon ./StartUps/Server.js"
+    "start": "node ./index.js",
+    "dev": "nodemon ./index.js",
+    "build": "nodemon ./index.js"
   },
   "repository": {
     "type": "git",
