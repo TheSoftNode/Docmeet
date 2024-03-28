@@ -170,7 +170,7 @@ const Doctors = () => {
                                 onConfirm={() => handleConfirmDeleteProfile(item._id)}
                                 onCancel={handleCancelDelete}
                                 title="Confirm Delete Account"
-                                style="bbg-white p-7 rounded-lg  shadow-lg absolute z-50 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+                                style="bg-white p-7 rounded-lg  shadow-lg absolute z-50 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
                             />
                                 
                         )}
