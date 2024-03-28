@@ -2,14 +2,15 @@
     "version": 2,
     "builds": [
         {
-            "src": "*.js",
+            "src": "StartUps/Server.js",
             "use": "@vercel/node"
         }
     ],
     "routes": [
+        { "handle": "filesystem" },
         {
             "src": "/(.*)",
-            "dest": "/"
+            "dest": "StartUps/Server.js"
         }
     ]
 }
