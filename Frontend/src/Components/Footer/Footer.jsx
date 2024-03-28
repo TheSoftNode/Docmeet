@@ -81,7 +81,7 @@ const Footer = () => {
       <div className="container">
         <div className="flex justify-between flex-col md:flex-row flex-wrap gap-[30px]">
          <div>
-          <img src={logo} alt="" />
+          <img src={logo} alt="" className="w-[50%] sm:w-[200px] text-green" />
           <p className="text-[16px] leading-7 font-[400] text-textColor mt-4">
             Copyright {year} developed by henry and Theophilus all right reserved.
           </p>
