@@ -24,7 +24,7 @@ app.use(cookieParser());
 // The cross origin resource sharing
 const corOptions = cors({
   //   origin: process.env.ORIGIN,
-  origin: ["http://localhost:5173"],
+  origin: ["https://do-cmeet-web-app.vercel.app"],
   methods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
   credentials: true,
 });
