@@ -160,32 +160,20 @@ const Doctors = () => {
                         >
                             <AiFillDelete fill='red'/>
                         </button>
-
-                        {showOverlay && (<div className={`fixed top-0 left-0 w-full h-full bg-black bg-opacity-[0.05] z-2 flex justify-center items-center `}></div>)}
-                        {deleteClickedIndex === index  && (
-                            <ConfirmationDialog
-                                message="Are you sure you want to delete your account permanently?"
-                                onConfirm={() => handleConfirmDeleteProfile(item._id)}
-                                onCancel={handleCancelDelete}
-                                title="Confirm Delete Account"
-                                style="bg-white p-7 rounded-lg  shadow-lg absolute z-50 top-1/2 left-1/4 w-[40%] sm:w-[50%] sm:top-1/2 sm:left-1/2 transform sm:-translate-x-1/2 sm:-translate-y-1/2"
-                            />
-                                
-                        )}
                            
                     </td>
 
-                    {/* {showOverlay && (<div className={`fixed top-0 left-0 w-full h-full bg-black bg-opacity-[0.05] z-2 flex justify-center items-center `}></div>)}
+                    {showOverlay && (<div className={`fixed top-0 left-0 w-full h-full bg-black bg-opacity-[0.05] z-2 flex justify-center items-center `}></div>)}
                         {deleteClickedIndex === index  && (
                             <ConfirmationDialog
                                 message="Are you sure you want to delete your account permanently?"
                                 onConfirm={() => handleConfirmDeleteProfile(item._id)}
                                 onCancel={handleCancelDelete}
                                 title="Confirm Delete Account"
-                                style="bg-white p-7 rounded-lg  shadow-lg absolute z-50 top-1/2 left-1/4 w-[40%] sm:w-[50%] sm:top-1/2 sm:left-1/2 transform sm:-translate-x-1/2 sm:-translate-y-1/2"
+                                style="bbg-white p-7 rounded-lg  shadow-lg absolute z-50 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
                             />
                                 
-                        )} */}
+                        )}
                 </tr>
                  
             ))}
