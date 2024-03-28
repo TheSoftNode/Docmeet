@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
-import dbConnect from "../Database/MongoDB.js";
-import app from "./App.js";
+import dbConnect from "./Database/MongoDB.js";
+import app from "./Startups/App.js";
 
 // Handle uncaughtException
 process.on("uncaughtException", (err) => {
@@ -16,7 +16,6 @@ const DB_storage = process.env.DB_storage.replace(
   "<password>",
   process.env.PASSWORD
 );
-const DB_storage_local = process.env.DB_storage_local;
 
 // Create a port
 const port = process.env.PORT || 3000;
