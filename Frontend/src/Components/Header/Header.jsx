@@ -4,6 +4,7 @@ import logo2 from "../../assets/Logos/Color logo - no background.svg";
 import { Link, NavLink } from 'react-router-dom';
 import { BiMenu } from "react-icons/bi";
 import { authContext } from "../../context/AuthContext";
+import ThemeToggler from "../ThemeSwitcher/ThemeToggler";
 
 
 const navLinks = [
@@ -106,7 +107,7 @@ const Header = () =>
                 </button>
               </Link>
             )}
-
+            <ThemeToggler />
             <span className="md:hidden" onClick={toggleMenu}>
               <BiMenu className='w-6 h-6 cursor-pointer' />
             </span>
