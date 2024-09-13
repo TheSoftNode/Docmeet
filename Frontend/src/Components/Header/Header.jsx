@@ -24,8 +24,8 @@ const navLinks = [
     display: 'Contact'
   },
   {
-    path: '/contact',
-    display: 'Contact'
+    path: '/about',
+    display: 'About'
   }
 ]
 
@@ -61,7 +61,7 @@ const Header = () =>
   const toggleMenu = () => menuRef.current.classList.toggle('show_menu')
 
   return (
-    <header className="header flex items-center" ref={headerRef}>
+    <header className="header flex items-center bg-emerald-50" ref={headerRef}>
       <div className="container">
         <div className="flex items-center justify-between">
           {/* ====== logo ======= */}
