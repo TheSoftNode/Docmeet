@@ -2,3 +2,5 @@ node_modules
 /vs
 package-lock.json
 # config/config.env
+
+config/config.env
